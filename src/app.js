@@ -72,15 +72,6 @@ client.on('messageCreate', async msg => {
 			await msg.reply("<:ben2:1000838308575846460>");
 		}
 	}
-	if(msg.content == "men"){
-		for(i = 0; i < 10; i++){
-			await msg.reply("🥵 🍆");
-		}
-	}
-	if(msg.content == "vivamos todos"){
-		await msg.reply("BAAAAAA");
-	}
-	//await console.log(msg);
 });
 
 
