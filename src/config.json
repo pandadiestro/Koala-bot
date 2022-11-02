@@ -1,0 +1,5 @@
+{
+	"clientId": "ClienIdGoesHere",
+	"guildId": "SomeGluid",
+	"token": "SecretToken"
+}
