@@ -12,3 +12,9 @@ Simple ass bot to play around with.
 > 3. discord.js package installed
 
 > 4. @discordjs/voice package installed
+
+
+
+
+
+###### <i>licensed under the unlicense</i>
