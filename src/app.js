@@ -67,6 +67,7 @@ client.login(token);
 client.on('messageCreate', async msg => {
 	if(msg.author.id == '824392633614598164'){return}
 	
+	//hehe balls
 	if(msg.content == "balls"){
 		for(i = 0; i < 10; i++){
 			await msg.reply("<:ben2:1000838308575846460>");
