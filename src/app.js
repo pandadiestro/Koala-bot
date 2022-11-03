@@ -67,12 +67,20 @@ client.login(token);
 client.on('messageCreate', async msg => {
 	if(msg.author.id == '824392633614598164'){return}
 	
-	//hehe balls
 	if(msg.content == "balls"){
 		for(i = 0; i < 10; i++){
 			await msg.reply("<:ben2:1000838308575846460>");
 		}
 	}
+	if(msg.content == "men"){
+		for(i = 0; i < 10; i++){
+			await msg.reply("🥵 🍆");
+		}
+	}
+	if(msg.content == "vivamos todos"){
+		await msg.reply("BAAAAAA");
+	}
+	//await console.log(msg);
 });
 
 
@@ -86,7 +94,7 @@ client.on('interactionCreate', async inter => {
 	};
 	
 	const connect = joinVoiceChannel({
-		channelId: inter.channelId,
+		channelId: inter.member.voice.channelId,
 		guildId: inter.guildId,
 		adapterCreator: inter.guild.voiceAdapterCreator,
 	});
@@ -118,7 +126,7 @@ client.on('interactionCreate', async inter => {
 		})
 	}
 	
-	if(inter.commandName == 'do'){
+	if(inter.commandName == 'do' && inter.member.voice.channel){
 		
 		connection = connect;
 		
