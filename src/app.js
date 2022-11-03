@@ -36,6 +36,7 @@ var queue = [];
 var queueposition = 0;
 var audioPlay = createAudioPlayer();
 var meta;
+var currentChannel;
 
 var songData = {
 	name: "",
@@ -70,6 +71,11 @@ client.on('messageCreate', async msg => {
 	if(msg.content == "balls"){
 		for(i = 0; i < 10; i++){
 			await msg.reply("<:ben2:1000838308575846460>");
+		}
+	}
+	if(msg.content == "men"){
+		for(i = 0; i < 10; i++){
+			await msg.reply("🥵 🍆");
 		}
 	}
 	if(msg.content == "vivamos todos"){
@@ -124,6 +130,8 @@ client.on('interactionCreate', async inter => {
 	if(inter.commandName == 'do' && inter.member.voice.channel){
 		
 		connection = connect;
+		
+		currentChannel = inter.channel;
 		
 		connection.subscribe(audioPlay);
 		
@@ -219,7 +227,7 @@ audioPlay.on(AudioPlayerStatus.Idle, () => {
 			},
 		}
 		
-		connection.channel.send({
+		currentChannel.send({
 			embeds: [embedContent],
 		})
 	}
