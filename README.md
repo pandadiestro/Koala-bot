@@ -10,10 +10,11 @@ Simple ass bot template to play around with.
 
 > 2. node.js (clearly)
 
-> 3. discord.js package installed
+> 3. discord.js **v14.3.0**
 
-> 4. @discordjs/voice package installed
+> 4. @discordjs/voice **v0.13.0**
 
+> 5. libsodium-wrappers **v0.7.10**
 
 
 
