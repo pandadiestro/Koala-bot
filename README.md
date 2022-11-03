@@ -6,9 +6,9 @@ Simple ass bot template to play around with.
 
 ##### Dependencies:
 
-> 1. yt-dlp
+> 1. yt-dlp **v2022.10.04**
 
-> 2. node.js (clearly)
+> 2. node.js (clearly) **v16.17.0**
 
 > 3. discord.js **v14.3.0**
 
