@@ -6,7 +6,7 @@ Simple ass node.js discord music bot template to play around with
 
 ##### Dependencies:
 
-> 1. yt-dlp **v2022.10.04** &emsp;<a href = "https://github.com/yt-dlp/yt-dlp"><img valign="middle" width="60" src="https://user-images.githubusercontent.com/71461113/199870319-87b27280-1339-4b3f-98b3-c726c0a52262.png"></img>&emsp;
+> 1. yt-dlp **v2022.10.04** &emsp;<a href = "https://github.com/yt-dlp/yt-dlp"><img valign="middle" width="60" src="https://user-images.githubusercontent.com/71461113/199870319-87b27280-1339-4b3f-98b3-c726c0a52262.png"></img></a>&emsp;
 
 > 2. node.js (clearly) **v16.17.0** &emsp;<a href = "https://nodejs.org/en/"><img valign="middle" width="60" src="https://user-images.githubusercontent.com/71461113/199868852-1db3496a-c25a-43cb-9582-3b4661f5cbdf.png"></img></a>&emsp;
 
