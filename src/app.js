@@ -66,7 +66,7 @@ client.login(token);
 
 
 client.on('messageCreate', async msg => {
-	if(msg.author.bot){return}
+	if(msg.author.id == '824392633614598164'){return}
 	
 	if(msg.content == "balls"){
 		for(i = 0; i < 10; i++){
@@ -135,7 +135,7 @@ client.on('interactionCreate', async inter => {
 		
 		connection.subscribe(audioPlay);
 		
-		exec(('yt-dlp -j ' + inter.options.getString('url')), (error, stdout, stderr) => {
+		exec(('yt-dlp -j ' + inter.options.getString('url').replace(/\s+/g, '')), (error, stdout, stderr) => {
 			if(!error){
 				meta = JSON.parse(stdout);
 				songData.name = meta.title;
@@ -147,7 +147,7 @@ client.on('interactionCreate', async inter => {
 			}
 		});
 		
-		exec(('yt-dlp -x -o "%(id)s.%(ext)s" ' + inter.options.getString('url')), (error, stdout, stderr) => {
+		exec(('yt-dlp -x -o "%(id)s.%(ext)s" ' + inter.options.getString('url').replace(/\s+/g, '')), (error, stdout, stderr) => {
 			if(!error){		
 				res = createAudioResource(createReadStream(songData.id + '.opus'));
 				//console.log(res);
