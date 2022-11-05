@@ -1,6 +1,8 @@
 const { Client, 
 		GatewayIntentBits,
-		EmbedBuilder, } = require('discord.js');
+		EmbedBuilder,
+		ButtonBuilder,
+		ActionRowBuilder, } = require('discord.js');
 
 const { joinVoiceChannel,
 		createAudioPlayer,
@@ -92,16 +94,18 @@ client.on('interactionCreate', async inter => {
 		thumbnail: "",
 	};
 	
-	const connect = joinVoiceChannel({
-		channelId: inter.member.voice.channelId,
-		guildId: inter.guildId,
-		adapterCreator: inter.guild.voiceAdapterCreator,
-	});
-	
-	if(inter.commandName == 'join'){
-		await connect;
-		
-		await inter.reply('joining...')
+	if(inter.commandName == 'bromita'){
+		await inter.reply('ok <:ben2:1000838308575846460>');
+		var row = new ActionRowBuilder();
+		row.addComponents(
+			new ButtonBuilder()
+				.setStyle(5)
+				.setURL('https://t.ly/yE6U')
+				.setLabel('hehe')
+		);
+		inter.channel.send({
+			components: [row]
+		})
 	}
 	
 	if(inter.commandName == 'leave'){
@@ -127,13 +131,17 @@ client.on('interactionCreate', async inter => {
 	
 	if(inter.commandName == 'do' && inter.member.voice.channel){
 		
-		await inter.reply('ya voy tarado !!1!');
+		const connect = joinVoiceChannel({
+			channelId: inter.member.voice.channelId,
+			guildId: inter.guildId,
+			adapterCreator: inter.guild.voiceAdapterCreator,
+		});
 		
-		connection = connect;
+		await inter.reply('ya voy tarado !!1!');
 		
 		currentChannel = inter.channel;
 		
-		connection.subscribe(audioPlay);
+		connect.subscribe(audioPlay);
 		
 		var Metadata = spawn('yt-dlp', ['-j', inter.options.getString('url')]);
 		
