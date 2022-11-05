@@ -12,7 +12,7 @@ const { joinVoiceChannel,
 
 const { token } = require('./config.json');
 
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
 const { createReadStream } = require('fs');
 
@@ -69,15 +69,13 @@ client.on('messageCreate', async msg => {
 	if(msg.author.bot){return}
 	
 	if(msg.content == "balls"){
-		for(i = 0; i < 10; i++){
-			await msg.reply("<:ben2:1000838308575846460>");
-		}
+		await msg.reply("<:ben2:1000838308575846460>");
 	}
-	if(msg.content == "men"){
-		for(i = 0; i < 10; i++){
-			await msg.reply("🥵 🍆");
-		}
-	}
+	// if(msg.content == "men"){
+		// for(i = 0; i < 10; i++){
+			// await msg.reply("🥵 🍆");
+		// }
+	// }
 	if(msg.content == "vivamos todos"){
 		await msg.reply("BAAAAAA");
 	}
@@ -129,66 +127,64 @@ client.on('interactionCreate', async inter => {
 	
 	if(inter.commandName == 'do' && inter.member.voice.channel){
 		
+		await inter.reply('ya voy tarado !!1!');
+		
 		connection = connect;
 		
 		currentChannel = inter.channel;
 		
 		connection.subscribe(audioPlay);
 		
-		exec(('yt-dlp -j ' + inter.options.getString('url').replace(/\s+/g, '')), (error, stdout, stderr) => {
-			if(!error){
-				meta = JSON.parse(stdout);
-				songData.name = meta.title;
-				songData.id = meta.id;
-				songData.thumbnail = meta.thumbnail;
-			}
-			else{
-				console.log(error);
-			}
-		});
+		var Metadata = spawn('yt-dlp', ['-j', inter.options.getString('url')]);
 		
-		exec(('yt-dlp -x -o "%(id)s.%(ext)s" ' + inter.options.getString('url').replace(/\s+/g, '')), (error, stdout, stderr) => {
-			if(!error){		
-				res = createAudioResource(createReadStream(songData.id + '.opus'));
-				//console.log(res);
-				
-				var topush =songData;
-				
-				queue.push(topush);
-				console.log(topush);
-				
-				//console.log(queue);
-				
-				if(audioPlay.state.status == 'idle'){
-					audioPlay.play(res);
-					
-					embedContent = {
-						color: 0x0099ff,
-						title: 'Current song',
-						description: queue[queueposition].name,
-						thumbnail:{
-							url: queue[queueposition].thumbnail,
-						},
-					}
-					
-					inter.channel.send({
-						embeds: [embedContent],
-					})
-				}
-			}
+		Metadata.stdout.on('data', (data) => {
+			meta = JSON.parse(data.toString());
 			
-			else{
-				console.log(error + '\n');
-			}
+			songData.name = meta.title;
+			songData.id = meta.id;
+			songData.thumbnail = meta.thumbnail;
 		});
 		
-		await inter.reply('ya voy tarado !!1!');
+		var Download = spawn('yt-dlp', ['-x', '-o "%(id)s.%(ext)s"', inter.options.getString('url')]);
+		
+		Download.on('close', (code) => {
+			res = createAudioResource(createReadStream(' #' + songData.id + '.opus'));
+			//console.log(res);
+			
+			var topush = songData;
+			
+			queue.push(topush);
+			console.log(topush);
+			
+			//console.log(queue);
+			
+			if(audioPlay.state.status == 'idle'){
+				audioPlay.play(res);
+				
+				embedContent = {
+					color: 0x0099ff,
+					title: 'Current song',
+					description: queue[queueposition].name,
+					thumbnail:{
+						url: queue[queueposition].thumbnail,
+					},
+				}
+				
+				inter.channel.send({
+					embeds: [embedContent],
+				})
+			}
+		});
 	}
+	
+	
+	
 	
 	if(inter.commandName == 'skip'){
 		audioPlay.stop();
+		
 		if(queue[queueposition]){
-			audioPlay.play(createAudioResource(createReadStream(queue[queueposition].id + '.opus')));
+			audioPlay.play(createAudioResource(createReadStream(' #' + queue[queueposition].id + '.opus')));
 			inter.reply('skipping...');
 			
 			embedContent = {
@@ -216,7 +212,7 @@ audioPlay.on(AudioPlayerStatus.Idle, () => {
 	console.log('no song playing! 1!');
 	
 	if(queue[queueposition]){
-		audioPlay.play(createAudioResource(createReadStream(queue[queueposition].id + '.opus')));
+		audioPlay.play(createAudioResource(' #' + createReadStream(queue[queueposition].id + '.opus')));
 		
 		embedContent = {
 			color: 0x0099ff,
