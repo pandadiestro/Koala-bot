@@ -15,7 +15,7 @@ const commands = [
 	new SlashCommandBuilder().setName('server').setDescription('Replies with server info!'),
 	
 	//-----------------music--commands------------------------------------
-	new SlashCommandBuilder().setName('join').setDescription('joins'),
+	new SlashCommandBuilder().setName('bromita').setDescription('bromita chistosa jaja xd'),
 	new SlashCommandBuilder().setName('leave').setDescription('leaves'),
 	new SlashCommandBuilder().setName('current').setDescription('shows current song'),
 	new SlashCommandBuilder().setName('skip').setDescription('skip'),
