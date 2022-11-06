@@ -220,7 +220,15 @@ audioPlay.on(AudioPlayerStatus.Idle, () => {
 	console.log('no song playing! 1!');
 	
 	if(queue[queueposition]){
-		audioPlay.play(createAudioResource(' #' + createReadStream(queue[queueposition].id + '.opus')));
+		audioPlay.play(createAudioResource(createReadStream(' #' + queue[queueposition].id + '.opus')));
+		
+		if(queue[queueposition-1].id && queue[queueposition-1].id != queue[queueposition].id){
+			console.log(queue[queueposition-1].id);
+			
+			fs.unlink(' #' + queue[queueposition-1].id + '.opus', (data) => {
+				console.log(`deleted, i hope...`)
+			});
+		}
 		
 		embedContent = {
 			color: 0x0099ff,
@@ -240,6 +248,11 @@ audioPlay.on(AudioPlayerStatus.Idle, () => {
 		console.log('no more songs to play!');
 		//console.log(queue);
 		//console.log(queueposition + '\n');
+		console.log(queue[queueposition-1].id);
+		
+		fs.unlink(' #' + queue[queueposition-1].id + '.opus', (data) => {
+			console.log(`deleted, i hope...`)
+		});
 	}
 });
 
