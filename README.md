@@ -1,5 +1,6 @@
 # Koala-bot
 [<img src="https://img.shields.io/github/issues/PandaDiestro/Koala-bot?style=for-the-badge&logo=github&color=red">](https://github.com/PandaDiestro/Koala-bot/issues)
+[<img src="https://img.shields.io/github/license/PandaDiestro/Koala-bot?style=for-the-badge&logo=github&color=red">](https://unlicense.org/)
 
 Simple ass node.js discord music bot template to play around with
 
