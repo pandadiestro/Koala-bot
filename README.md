@@ -17,4 +17,4 @@ Simple ass node.js discord music bot template to play around with
 > 5. libsodium-wrappers **v0.7.10** &emsp;<a href = "https://www.npmjs.com/package/libsodium-wrappers"><img valign="middle" width="80" src="https://user-images.githubusercontent.com/71461113/199870693-5c73c302-d052-486b-981c-984b987ac12f.png"></img></a>&emsp;
 
 
-###### <i>hola</i>
+###### <i>@FISI</i>
