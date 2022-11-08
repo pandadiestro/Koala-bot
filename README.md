@@ -10,7 +10,7 @@ Simple ass node.js discord music bot template to play around with
 
 > 2. node.js (clearly) **v16.17.0** &emsp;<a href = "https://nodejs.org/en/"><img valign="middle" width="60" src="https://user-images.githubusercontent.com/71461113/199868852-1db3496a-c25a-43cb-9582-3b4661f5cbdf.png"></img></a>&emsp;
 
-> 3. discord.js **v14.3.0** &emsp;<a href = "https://www.npmjs.com/package/discord.js"><img valign="middle" width="60" src="https://user-images.githubusercontent.com/71461113/199870588-5a988e63-7c1e-4588-93b2-86b01540940c.png"></img></a>&emsp;
+> 3. discord.js **v14.6.0** &emsp;<a href = "https://www.npmjs.com/package/discord.js"><img valign="middle" width="60" src="https://user-images.githubusercontent.com/71461113/199870588-5a988e63-7c1e-4588-93b2-86b01540940c.png"></img></a>&emsp;
 
 > 4. @discordjs/voice **v0.13.0** &emsp;<a href = "https://www.npmjs.com/package/@discordjs/voice"><img valign="middle" width="60" src="https://user-images.githubusercontent.com/71461113/199870588-5a988e63-7c1e-4588-93b2-86b01540940c.png"></img></a>&emsp;
 
