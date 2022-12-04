@@ -66,25 +66,6 @@ client.once('ready', () => {
 client.login(token);
 
 
-
-client.on('messageCreate', async msg => {
-	if(msg.author.bot){return}
-	
-	if(msg.content == "balls"){
-		await msg.reply("<:ben2:1000838308575846460>");
-	}
-	// if(msg.content == "men"){
-		// for(i = 0; i < 10; i++){
-			// await msg.reply("🥵 🍆");
-		// }
-	// }
-	if(msg.content == "vivamos todos"){
-		await msg.reply("BAAAAAA");
-	}
-	//await console.log(msg);
-});
-
-
 client.on('interactionCreate', async inter => {
 	if(!inter.isCommand){return}
 	
@@ -109,8 +90,8 @@ client.on('interactionCreate', async inter => {
 	}
 	
 	if(inter.commandName == 'leave'){
-		await connect.destroy();
-		await inter.reply('leaving...')
+		connect.destroy();
+		await inter.reply('leaving...');
 	}
 	
 	if(inter.commandName == 'current' && queue.length != 0){
@@ -141,9 +122,18 @@ client.on('interactionCreate', async inter => {
 		
 		currentChannel = inter.channel;
 		
-		connect.subscribe(audioPlay);
+		if(connect){
+			connect.subscribe(audioPlay);
+		}
+		else{
+			console.log("connection could not be succesfully created");
+		}
 		
 		var Metadata = spawn('yt-dlp', ['-j', inter.options.getString('url')]);
+		
+		Metadata.on('error', error => {
+			console.error(error);
+		});
 		
 		Metadata.stdout.on('data', (data) => {
 			meta = JSON.parse(data.toString());
@@ -153,10 +143,20 @@ client.on('interactionCreate', async inter => {
 			songData.thumbnail = meta.thumbnail;
 		});
 		
-		var Download = spawn('yt-dlp', ['-x', '-o "%(id)s.%(ext)s"', inter.options.getString('url')]);
+		var Download = spawn('yt-dlp', ['-x', '-o', '"%(id)s.opus"', inter.options.getString('url')]);
+		
+		Download.on('error', (error) => {
+			console.log('error on download::168');
+			return;
+		});
 		
 		Download.on('close', (code) => {
-			res = createAudioResource(createReadStream(' #' + songData.id + '.opus'));
+			
+			try{
+				res = createAudioResource(createReadStream('#' + songData.id + '.opus'));
+			}catch(error){
+				console.error(error);
+			}
 			//console.log(res);
 			
 			var topush = songData;
@@ -166,21 +166,18 @@ client.on('interactionCreate', async inter => {
 			
 			//console.log(queue);
 			
-			if(audioPlay.state.status == 'idle'){
+			if(audioPlay.state.status == 'idle' && res){
+				
 				audioPlay.play(res);
 				
-				embedContent = {
-					color: 0x0099ff,
-					title: 'Current song',
-					description: queue[queueposition].name,
-					thumbnail:{
-						url: queue[queueposition].thumbnail,
-					},
-				}
+				audioPlay.on('error', (error) => {
+					console.error(error);
+					console.log('error on audio play')
+				});
 				
-				inter.channel.send({
-					embeds: [embedContent],
-				})
+				if(queue[queueposition]){
+					sendEmbed(inter.channel, queue[queueposition].name, queue[queueposition].thumbnail)
+				}
 			}
 		});
 	}
@@ -188,25 +185,27 @@ client.on('interactionCreate', async inter => {
 	
 	
 	
-	if(inter.commandName == 'skip'){
+	if(inter.commandName == 'skip' && audioPlay){
 		audioPlay.stop();
 		
 		if(queue[queueposition]){
-			audioPlay.play(createAudioResource(createReadStream(' #' + queue[queueposition].id + '.opus')));
-			inter.reply('skipping...');
-			
-			embedContent = {
-				color: 0x0099ff,
-				title: 'Current song',
-				description: queue[queueposition].name,
-				thumbnail:{
-					url: queue[queueposition].thumbnail,
-				},
+			try{
+				audioPlay.play(createAudioResource(createReadStream('#' + queue[queueposition].id + '.opus')));
+			}catch(error){
+				console.error(error);
 			}
 			
-			inter.channel.send({
-				embeds: [embedContent],
-			})
+			await inter.reply('skipping...');
+			
+			if(queue[queueposition]){
+				sendEmbed(inter.channel, queue[queueposition].name, queue[queueposition].thumbnail)
+			}
+		}
+		else{
+			inter.channel.send('no songs left on the queue, stopping the player...');
+			audioPlay.stop();
+			queue = [];
+			queueposition = 0;
 		}
 	}
 	
@@ -217,57 +216,73 @@ client.on('interactionCreate', async inter => {
 });
 
 audioPlay.on(AudioPlayerStatus.Idle, () => {
-	console.log('no song playing! 1!');
+	console.log('AudioPlayerStatus: Idle');
 	
-	if(queue[queueposition]){
-		audioPlay.play(createAudioResource(createReadStream(' #' + queue[queueposition].id + '.opus')));
+	var auxiliarAudioResource;
+	
+	try{
+		auxiliarAudioResource = createReadStream('#' + queue[queueposition].id + '.opus');
+	}catch(error){
+		console.error(error);
+	}
+	
+	if(auxiliarAudioResource){
+		auxiliarAudioResource.on('error', (error) => {
+			console.log('there was an error loading the audioResource');
+			
+			queue.splice(queueposition, 1);
+			
+			queueposition -= 1;
+			
+			return;
+		});	
+	}
+	
+	if(queue[queueposition] && queue[queueposition - 1] && auxiliarAudioResource){
+		audioPlay.play(createAudioResource(auxiliarAudioResource));
 		
-		if(queue[queueposition-1].id && queue[queueposition-1].id != queue[queueposition].id){
+		if(queue[queueposition-1].id != queue[queueposition].id){
 			console.log(queue[queueposition-1].id);
 			
-			fs.unlink(' #' + queue[queueposition-1].id + '.opus', (data) => {
+			fs.unlink('#' + queue[queueposition-1].id + '.opus', (data) => {
 				console.log(`deleted, i hope...`)
 			});
 		}
 		
-		embedContent = {
-			color: 0x0099ff,
-			title: 'Current song',
-			description: queue[queueposition].name,
-			thumbnail:{
-				url: queue[queueposition].thumbnail,
-			},
-		}
-		
-		currentChannel.send({
-			embeds: [embedContent],
-		})
+		sendEmbed(currentChannel, queue[queueposition].name, queue[queueposition].thumbnail);
 	}
 	
 	else{
 		console.log('no more songs to play!');
 		//console.log(queue);
 		//console.log(queueposition + '\n');
-		console.log(queue[queueposition-1].id);
-		
-		fs.unlink(' #' + queue[queueposition-1].id + '.opus', (data) => {
-			console.log(`deleted, i hope...`)
-		});
+		//console.log(queue[queueposition-1].id);
+		if(queue[queueposition-1]){
+			fs.unlink('#' + queue[queueposition-1].id + '.opus', (data) => {
+				console.log(`deleted, i hope...`)
+			});	
+		}
 	}
 });
 
 audioPlay.on(AudioPlayerStatus.Playing, () => {
-	console.log('already playing something lol');
+	console.log(`a song started playing, next: ${queueposition}, current: ${queueposition-1}`);
 	queueposition++;
-	//console.log(queue);
-	//console.log(queueposition + '\n');
 });
 
 
-const countMyMessages = async (channel) => {
-	await console.log(channel)
+function sendEmbed(channelTo, desc, ThumbUrl){
+	channelTo.send({
+		embeds: [{
+			color: 0x0099ff,
+			title: 'Current song',
+			description: desc,
+			thumbnail:{
+				url: ThumbUrl
+			},
+		}],
+	})
 }
-
 
 
 
