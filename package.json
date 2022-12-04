@@ -1,6 +1,6 @@
 {
   "name": "koala",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "idk, just a simple-ish discord bot template",
   "main": "app.js",
   "scripts": {
