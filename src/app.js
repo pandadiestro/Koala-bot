@@ -20,10 +20,6 @@ const { spawn } = require('child_process')
 const { createReadStream } = require('fs')
 const fs = require('fs')
 
-const token = process.env.token
-const guildId = process.env.guildId
-const clientId = process.env.clientId
-
 // Create a new client instance
 const client = new Client({
   intents: [
@@ -63,8 +59,10 @@ client.once('ready', () => {
   console.log('Ready!')
 })
 
+console.log(process.env.TOKEN)
+
 // Login to Discord with your client's token
-client.login(token)
+client.login(process.env.TOKEN)
 
 client.on('interactionCreate', async (inter) => {
   if(!inter.isCommand){return}
