@@ -13,7 +13,7 @@ const {
 const commands = [
 	new SlashCommandBuilder().setName('ping').setDescription('Replies with pong!'),
 	new SlashCommandBuilder().setName('server').setDescription('Replies with server info!'),
-	
+
 	//-----------------music--commands------------------------------------
 	new SlashCommandBuilder().setName('bromita').setDescription('bromita chistosa jaja xd'),
 	new SlashCommandBuilder().setName('leave').setDescription('leaves'),
