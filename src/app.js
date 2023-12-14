@@ -10,9 +10,6 @@ const {
   joinVoiceChannel,
   createAudioPlayer,
   createAudioResource,
-  getVoiceConnection,
-  VoiceConnectionStatus,
-  entersState,
   AudioPlayerStatus
 } = require('@discordjs/voice')
 
@@ -51,7 +48,7 @@ var embedContent = new EmbedBuilder()
 const audioFormat = 'opus'
 //-----------------------------------------
 
-
+audioPlay.on("error", (console.error))
 
 
 // When the client is ready, run this code (only once)
@@ -75,7 +72,7 @@ client.on('interactionCreate', async (inter) => {
 
   if(inter.commandName == 'bromita'){
     await inter.reply('ok <:ben2:1000838308575846460>')
-    var row = new ActionRowBuilder()
+    const row = new ActionRowBuilder()
     row.addComponents(
       new ButtonBuilder()
       .setStyle(5)
@@ -146,21 +143,19 @@ client.on('interactionCreate', async (inter) => {
       download.on('close', () => {
         try {
           res = createAudioResource(createReadStream(`${songData.id}.${audioFormat}`))
-        } catch(error){
+        } catch(error) {
           console.error("Could not create audio resource: ", error)
         }
 
         queue.push(songData)
 
-        if(audioPlay.state.status == AudioPlayerStatus.Idle && res){
+        if (audioPlay.state.status == AudioPlayerStatus.Idle && res) {
           audioPlay.play(res)
-
           audioPlay.on('error', (error) => {
-            console.error(error)
-            console.log('error on audio play')
+            console.err(`error on audio play ${error}`)
           })
 
-          if(queue[queueposition]){
+          if (queue[queueposition]) {
             sendEmbed(inter.channel, queue[queueposition].name, queue[queueposition].thumbnail)
           }
         }
@@ -169,26 +164,22 @@ client.on('interactionCreate', async (inter) => {
 
   }
 
-
-
-
-  if(inter.commandName == 'skip' && audioPlay){
+  if (inter.commandName == 'skip' && audioPlay) {
     audioPlay.stop()
 
-    if(queue[queueposition]){
-      try{
+    if (queue[queueposition]) {
+      try {
         audioPlay.play(createAudioResource(createReadStream(`${queue[queueposition].id}.${audioFormat}`)))
-      } catch(error){
+      } catch(error) {
         console.error(error)
       }
 
       await inter.reply('skipping...')
 
-      if(queue[queueposition]){
+      if (queue[queueposition]) {
         sendEmbed(inter.channel, queue[queueposition].name, queue[queueposition].thumbnail)
       }
-    }
-    else{
+    } else {
       inter.channel.send('no songs left on the queue, stopping the player...')
       audioPlay.stop()
       queue = []
@@ -207,30 +198,27 @@ audioPlay.on(AudioPlayerStatus.Idle, () => {
 
   var auxiliarAudioResource
 
-  try{
-    auxiliarAudioResource = (createReadStream(`${queue[queueposition].id}.${audioFormat}`))
-  }catch(error){
+  try {
+    auxiliarAudioResource = createReadStream(`${queue[queueposition].id}.${audioFormat}`)
+  } catch(error) {
     console.error(error)
+    return
   }
 
-  if(auxiliarAudioResource){
-    auxiliarAudioResource.on('error', (error) => {
-      console.log('there was an error loading the audioResource')
-      queue.splice(queueposition, 1)
-      queueposition -= 1
+  auxiliarAudioResource.on('error', (error) => {
+    console.error(`Error loading the audioResource: ${error}`)
+    queue.splice(queueposition, 1)
+    queueposition -= 1
+  })
 
-      return
-    })
-  }
-
-  if(queue[queueposition] && queue[queueposition - 1] && auxiliarAudioResource){
+  if (queue[queueposition] && queue[queueposition - 1]) {
     audioPlay.play(createAudioResource(auxiliarAudioResource))
 
-    if(queue[queueposition-1].id != queue[queueposition].id){
+    if (queue[queueposition-1].id != queue[queueposition].id) {
       console.log(queue[queueposition-1].id)
 
-      fs.unlink(`${queue[queueposition].id}.${audioFormat}` + '.opus', (data) => {
-        console.log(`deleted, i hope...`)
+      fs.unlink(`${queue[queueposition].id}.${audioFormat}`, (err) => {
+        if (err) console.error(`Deleted: ${err}`)
       })
     }
 
@@ -239,12 +227,9 @@ audioPlay.on(AudioPlayerStatus.Idle, () => {
 
   else{
     console.log('no more songs to play!')
-    //console.log(queue)
-    //console.log(queueposition + '\n')
-    //console.log(queue[queueposition-1].id)
-    if(queue[queueposition-1]){
-      fs.unlink(`${queue[queueposition].id}.${audioFormat}`, () => {
-        console.log(`deleted, i hope...`)
+    if (queue[queueposition-1]) {
+      fs.unlink(`${queue[queueposition].id}.${audioFormat}`, (err) => {
+        if (err) console.log(`deleted, i hope...`)
       })
     }
   }
@@ -255,8 +240,7 @@ audioPlay.on(AudioPlayerStatus.Playing, () => {
   queueposition++
 })
 
-
-function sendEmbed(channelTo, desc, ThumbUrl){
+function sendEmbed(channelTo, desc, ThumbUrl) {
   channelTo.send({
     embeds: [{
       color: 0x0099ff,
